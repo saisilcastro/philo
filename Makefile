@@ -12,7 +12,8 @@ INCLUDE = $(CURDIR)
 SRC = 	util.c \
 		timer.c \
 		life.c \
-		life-command.c \
+		life-create.c \
+		life-update.c \
 		philo.c \
 		philo-action.c \
 		main.c
@@ -33,4 +34,4 @@ fclean: clean
 	$(call REMOVE,${NAME})
 re: fclean all
 play:
-	./$(NAME) 3 10000 5000 2500
+	./$(NAME) 15 100000 2500 2000

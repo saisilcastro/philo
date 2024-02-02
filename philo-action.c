@@ -6,69 +6,78 @@
 /*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:11:49 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/01 20:21:22 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/02 19:38:07 by mister-code      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <unistd.h>
 
-static inline char	*philo_msg(int act)
+static inline t_status	right_hand(t_philo *man)
 {
-	if (act == 2)
-		return ("is thinking\n");
-	else if (act == 1)
-		return ("is sleeping\n");
-	return ("is eating\n");
+	int	left;
+	int	right;
+
+	right = pthread_mutex_lock(man->right_hand);
+	left = pthread_mutex_lock(man->left_hand);
+	if (!right && !left)
+	{
+		if (life_get()->alive)
+		{
+			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
+			printf("%ld %i is eating\n", life_time(), man->id + 1);
+		}
+		man->has_eaten++;
+		usleep(man->wait[0].interval * 1000);
+		pthread_mutex_unlock(man->right_hand);
+		pthread_mutex_unlock(man->left_hand);
+		timer_set(man->die);
+	}
+	return (On);
 }
 
-t_status	philo_take_fork(t_life *life, t_philo *man)
+static inline t_status	left_hand(t_philo *man)
 {
-	t_philo	*neighbor;
-	if (man->hand & (1 << LEFT_HAND) && man->hand & (1 << RIGHT_HAND))
-		return (printf("%ld %i took a fork\n", life_time(), man->id), On);
-	if (!(man->hand & (1 << LEFT_HAND)))
+	int	left;
+	int	right;
+
+	left = pthread_mutex_lock(man->left_hand);
+	right = pthread_mutex_lock(man->right_hand);
+	if (!left && !right)
 	{
-		pthread_mutex_lock(&life->locker[1]);
-		neighbor = &life->philo[index_get(man->id - 1, life->philo_max - 1)];
-		neighbor->hand &= ~(1 << RIGHT_HAND);
-		man->hand |= (1 << LEFT_HAND);
-		pthread_mutex_unlock(&life->locker[1]);
+		if (life_get()->alive)
+		{
+			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
+			printf("%ld %i is eating\n", life_time(), man->id + 1);
+		}
+		man->has_eaten++;
+		usleep(man->wait[0].interval * 1000);
+		pthread_mutex_unlock(man->left_hand);
+		pthread_mutex_unlock(man->right_hand);
+		timer_set(man->die);
 	}
-	if (!(man->hand & (1 << RIGHT_HAND)))
-	{
-		pthread_mutex_lock(&life->locker[1]);
-		neighbor = &life->philo[index_get(man->id + 1, life->philo_max - 1)];
-		neighbor->hand &= ~(1 << LEFT_HAND);
-		man->hand |= (1 << RIGHT_HAND);
-		pthread_mutex_unlock(&life->locker[1]);
-	}
+	return (On);
+}
+
+t_status	philo_eat(t_philo *man)
+{
+	if (man->id %2 == 0)
+		return (right_hand(man));
+	else
+		return (left_hand(man));
 	return (Off);
 }
 
-void	philo_action(t_life *life, t_philo *man)
+void	philo_sleep(t_philo *man)
 {
-	if (!philo_take_fork(life, man))
-		return ;
-	if (timer_get(&man->wait[man->act]))
-	{
-		printf("%ld %i %s", life_time(), man->id + 1, philo_msg(man->act));
-		man->act++;
-		if (man->act > 2)
-			man->act = 0;
-		timer_set(&man->wait[man->act]);
-	}
+	if (life_get()->alive)
+		printf("%ld %i is sleeping\n", life_time(), man->id + 1);
+	usleep(man->wait[1].interval * 1000);
 }
 
-void	has_philo_died(t_life *life, t_philo *man)
+void	philo_think(t_philo *man)
 {
-	if (timer_get(man->die))
-	{
-		if (life->alive == On)
-		{
-			pthread_mutex_lock(&life->locker[0]);
-			printf("%li %i has died\n", life_time(), man->id);
-			life->alive = Off;
-			pthread_mutex_unlock(&life->locker[0]);
-		}
-	}
+	if (life_get()->alive)
+		printf("%ld %i is thinking\n", life_time(), man->id + 1);
+	usleep(man->wait[2].interval * 1000);
 }

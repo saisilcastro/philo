@@ -1,38 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   life-command.c                                     :+:      :+:    :+:   */
+/*   life-create.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/11 11:03:29 by lde-cast          #+#    #+#             */
-/*   Updated: 2024/01/11 15:33:03 by lde-cast         ###   ########.fr       */
+/*   Created: 2024/02/02 15:04:11 by mister-code       #+#    #+#             */
+/*   Updated: 2024/02/02 19:32:32 by mister-code      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
-#include <stdio.h>
-#include <unistd.h>
 
-static inline void	*life_action(void *data)
+static inline void	life_fork_start(t_life *set)
 {
-	t_life		*life;
+	int	i;
 
-	life = life_get();
-	while (life->alive == On)
+	set->fork = malloc((set->philo_max + 1) * sizeof(pthread_mutex_t));
+	if (!set->fork)
+		return ;
+	i = -1;
+	while (++i < set->philo_max)
 	{
-		philo_action(life, data);
-		//has_philo_died(life, data);
+		if (pthread_mutex_init(&set->fork[i], NULL) != 0)
+			printf("error creating mutex\n");
 	}
-	return (NULL);
-}
-
-static inline void	*main_loop(void *life)
-{
-	while (((t_life *)life)->alive == On)
-	{
-	}
-	return (NULL);
 }
 
 static inline t_status	life_create(t_life *set)
@@ -40,12 +32,15 @@ static inline t_status	life_create(t_life *set)
 	int		i;
 
 	set->philo = malloc((set->philo_max + 1) * sizeof(t_philo));
+	life_fork_start(set);
 	if (!set->philo)
 		return (Off);
 	i = -1;
 	while (++i < set->philo_max)
 	{
 		philo_set(&set->philo[i], i, set->action);
+		set->philo[i].right_hand = &set->fork[i];
+		set->philo[i].left_hand = &set->fork[(i + 1) % set->philo_max];
 		if (pthread_create(&set->philo[i].core, NULL,
 				&life_action, &set->philo[i]) != 0)
 			perror("failure creating pthread");
@@ -65,7 +60,7 @@ static inline void	life_join(t_life *set)
 	pthread_join(set->leader, NULL);
 }
 
-void	life_command(t_life *set, char **argv)
+void	life_is_going(t_life *set, char **argv)
 {
 	int	i;
 

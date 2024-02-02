@@ -51,17 +51,18 @@ enum e_hand{
 
 struct s_philo{
 	pthread_t	core;
-	int			id;
-	int			has_eaten;
-	int			act;
-	t_timer		wait[3];
-	t_timer		die[1];
-	unsigned	hand: 2;
+	int				id;
+	int				has_eaten;
+	t_timer			wait[3];
+	t_timer			die[1];
+	pthread_mutex_t	*left_hand;
+	pthread_mutex_t	*right_hand;
 };
 
 extern void				philo_set(t_philo *set, int id, t_action *action);
-extern void				philo_action(t_life *life, t_philo *set);
-extern void				has_philo_died(t_life *life, t_philo *man);
+extern t_status			philo_eat(t_philo *man);
+extern void				philo_sleep(t_philo *man);
+extern void				philo_think(t_philo *man);
 
 struct s_action{
 	long	die;
@@ -76,7 +77,8 @@ struct s_life{
 	t_action		action[1];
 	t_status		alive;
 	pthread_t		leader;
-	pthread_mutex_t	locker[2];
+	pthread_mutex_t	time_to_die;
+	pthread_mutex_t	*fork;
 	long			begin;
 };
 
@@ -84,7 +86,8 @@ extern t_life			*life_get(void);
 extern void				life_set(t_life *set);
 extern long				life_time(void);
 extern void				life_is_going(t_life *set, char **argv);
-extern void				life_command(t_life *set, char **argv);
+extern void				*life_action(void *data);
+extern void				*main_loop(void *data);
 extern void				life_pop(t_life *set);
 
 #endif

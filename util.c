@@ -50,3 +50,8 @@ int	index_get(int n, int max)
 		return (0);
 	return (n);
 }
+
+long	life_time(void)
+{
+	return (time_now() - life_get()->begin);
+}
