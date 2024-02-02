@@ -6,7 +6,7 @@
 /*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 15:05:47 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/02 19:35:53 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/02 20:24:20 by mister-code      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	*life_action(void *data)
 void	*main_loop(void *data)
 {
 	t_life	*life;
-	int	i;
+	int		i;
 
 	life = data;
 	while (life->alive == On)

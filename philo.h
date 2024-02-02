@@ -29,12 +29,14 @@ extern unsigned long	pl_atoul_base(char *str, unsigned char base);
 extern long				times_thousand(long i);
 extern int				index_get(int n, int max);
 
-enum e_status{
+enum e_status
+{
 	Off,
 	On
 };
 
-struct s_timer{
+struct s_timer
+{
 	long		begin;
 	long		interval;
 };
@@ -44,13 +46,15 @@ extern void				timer_start(t_timer *set, unsigned long interval);
 extern int				timer_get(t_timer *set);
 extern void				timer_set(t_timer *set);
 
-enum e_hand{
+enum e_hand
+{
 	LEFT_HAND,
 	RIGHT_HAND
 };
 
-struct s_philo{
-	pthread_t	core;
+struct s_philo
+{
+	pthread_t		core;
 	int				id;
 	int				has_eaten;
 	t_timer			wait[3];
@@ -64,14 +68,16 @@ extern t_status			philo_eat(t_philo *man);
 extern void				philo_sleep(t_philo *man);
 extern void				philo_think(t_philo *man);
 
-struct s_action{
+struct s_action
+{
 	long	die;
 	long	eat;
 	long	sleep;
 	int		eat_max;
 };
 
-struct s_life{
+struct s_life
+{
 	t_philo			*philo;
 	int				philo_max;
 	t_action		action[1];

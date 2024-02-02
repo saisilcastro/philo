@@ -6,7 +6,7 @@
 /*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:11:49 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/02 19:38:07 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/02 20:24:32 by mister-code      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static inline t_status	left_hand(t_philo *man)
 
 t_status	philo_eat(t_philo *man)
 {
-	if (man->id %2 == 0)
+	if (man->id % 2 == 0)
 		return (right_hand(man));
 	else
 		return (left_hand(man));
