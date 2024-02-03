@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo-action.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
+/*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:11:49 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/02 20:24:32 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/03 12:23:53 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static inline t_status	right_hand(t_philo *man)
 	{
 		if (life_get()->alive)
 		{
+			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
 			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
 			printf("%ld %i is eating\n", life_time(), man->id + 1);
 		}
@@ -51,6 +52,7 @@ static inline t_status	left_hand(t_philo *man)
 	{
 		if (life_get()->alive)
 		{
+			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
 			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
 			printf("%ld %i is eating\n", life_time(), man->id + 1);
 		}
