@@ -34,4 +34,4 @@ fclean: clean
 	$(call REMOVE,${NAME})
 re: fclean all
 play:
-	./$(NAME) 15 100000 2500 2000
+	./$(NAME) 2 5000 1400 1000

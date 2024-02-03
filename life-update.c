@@ -21,13 +21,13 @@ void	*life_action(void *data)
 	{
 		philo_eat(data);
 		if (life->alive == Off)
-			break ;
+			return (NULL);
 		philo_sleep(data);
 		if (life->alive == Off)
-			break ;
+			return (NULL);
 		philo_think(data);
 		if (life->alive == Off)
-			break ;
+			return (NULL);
 	}
 	return (NULL);
 }
@@ -51,6 +51,7 @@ void	*main_loop(void *data)
 				life->alive = Off;
 				printf("%ld %i has died\n", life_time(), life->philo[i].id + 1);
 				pthread_mutex_unlock(&life->time_to_die);
+				pthread_mutex_unlock(life->philo->right_hand);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&life->time_to_die);
