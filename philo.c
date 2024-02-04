@@ -18,8 +18,8 @@ void	philo_set(t_philo *set, int id, t_action *action)
 	set->has_eaten = 0;
 	set->left_hand = NULL;
 	set->right_hand = NULL;
-	timer_start(&set->die[0], action->die);
 	timer_start(&set->wait[0], action->eat);
 	timer_start(&set->wait[1], action->sleep);
-	timer_start(&set->wait[2], action->eat + action->sleep);
+	timer_start(&set->wait[2], 0);
+	timer_start(set->die, action->die);
 }

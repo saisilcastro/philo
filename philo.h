@@ -26,7 +26,6 @@ typedef struct s_action	t_action;
 typedef struct s_life	t_life;
 
 extern unsigned long	pl_atoul_base(char *str, unsigned char base);
-extern long				times_thousand(long i);
 extern int				index_get(int n, int max);
 
 enum e_status
@@ -37,13 +36,12 @@ enum e_status
 
 struct s_timer
 {
-	long		begin;
-	long		interval;
+	_Atomic long		begin;
+	_Atomic long		interval;
 };
 
 extern long				time_now(void);
 extern void				timer_start(t_timer *set, unsigned long interval);
-extern int				timer_get(t_timer *set);
 extern void				timer_set(t_timer *set);
 
 enum e_hand
@@ -63,8 +61,10 @@ struct s_philo
 	pthread_mutex_t	*right_hand;
 };
 
+extern t_status			philo_fork_take(t_philo *set);
+extern void				philo_fork_release(t_philo *set);
+extern t_status			philo_eat(t_philo *set);
 extern void				philo_set(t_philo *set, int id, t_action *action);
-extern t_status			philo_eat(t_philo *man);
 extern void				philo_sleep(t_philo *man);
 extern void				philo_think(t_philo *man);
 
@@ -78,22 +78,23 @@ struct s_action
 
 struct s_life
 {
-	t_philo			*philo;
-	int				philo_max;
-	t_action		action[1];
-	t_status		alive;
-	pthread_t		leader;
-	pthread_mutex_t	time_to_die;
-	pthread_mutex_t	*fork;
-	long			begin;
+	t_philo		*philo;
+	_Atomic int			philo_max;
+	t_action			action[1];
+	_Atomic t_status	alive;
+	pthread_t			leader;
+	pthread_mutex_t		time_to_die;
+	pthread_mutex_t		*fork;
+	_Atomic long		begin;
 };
 
 extern t_life			*life_get(void);
 extern void				life_set(t_life *set);
-extern long				life_time(void);
 extern void				life_is_going(t_life *set, char **argv);
 extern void				*life_action(void *data);
 extern void				*main_loop(void *data);
+extern long				life_time(void);
+extern t_status			life_is_over(void);
 extern void				life_pop(t_life *set);
 
 #endif

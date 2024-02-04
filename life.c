@@ -21,6 +21,21 @@ t_life	*life_get(void)
 	return (&life);
 }
 
+t_status	life_is_over(void)
+{
+	t_life	*life;
+
+	life = life_get();
+	pthread_mutex_lock(&life->time_to_die);
+	if (life->alive == Off)
+	{
+		pthread_mutex_unlock(&life->time_to_die);
+		return (On);
+	}
+	pthread_mutex_unlock(&life->time_to_die);
+	return (Off);
+}
+
 void	life_set(t_life *set)
 {
 	set->alive = On;
@@ -28,16 +43,4 @@ void	life_set(t_life *set)
 		printf("error creating mutex\n");
 	set->begin = time_now();
 	set->fork = NULL;
-}
-
-void	life_pop(t_life *set)
-{
-	int	i;
-
-	if (set->philo)
-		free(set->philo);
-	pthread_mutex_destroy(&set->time_to_die);
-	i = -1;
-	while (++i < set->philo_max)
-		pthread_mutex_destroy(&set->fork[i]);
 }

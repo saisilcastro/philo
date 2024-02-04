@@ -3,36 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   life-create.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
+/*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 15:04:11 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/02 19:32:32 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/04 01:04:30 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static inline void	life_fork_start(t_life *set)
+static inline t_status	life_fork_start(t_life *set)
 {
 	int	i;
 
-	set->fork = malloc((set->philo_max + 1) * sizeof(pthread_mutex_t));
+	set->fork = malloc((set->philo_max) * sizeof(pthread_mutex_t));
 	if (!set->fork)
-		return ;
+		return (Off);
 	i = -1;
 	while (++i < set->philo_max)
 	{
 		if (pthread_mutex_init(&set->fork[i], NULL) != 0)
 			printf("error creating mutex\n");
 	}
+	return (On);
 }
 
 static inline t_status	life_create(t_life *set)
 {
 	int		i;
 
-	set->philo = malloc((set->philo_max + 1) * sizeof(t_philo));
-	life_fork_start(set);
+	if (!life_fork_start(set))
+		return (Off);
+	set->philo = malloc((set->philo_max) * sizeof(t_philo));
 	if (!set->philo)
 		return (Off);
 	i = -1;
@@ -54,6 +56,8 @@ static inline void	life_join(t_life *set)
 {
 	int	i;
 
+	if (!set)
+		return ;
 	i = -1;
 	while (++i < set->philo_max)
 		pthread_join(set->philo[i].core, NULL);

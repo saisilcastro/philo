@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   life-update.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mister-coder <mister-coder@student.42.f    +#+  +:+       +#+        */
+/*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 15:05:47 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/02 20:24:20 by mister-code      ###   ########.fr       */
+/*   Updated: 2024/02/04 01:46:45 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,46 +16,57 @@ void	*life_action(void *data)
 {
 	t_life		*life;
 
+	if (!data)
+		return (NULL);
+	(void)data;
 	life = life_get();
-	while (life->alive == On)
+	while (life->alive)
 	{
-		philo_eat(data);
-		if (life->alive == Off)
-			return (NULL);
-		philo_sleep(data);
-		if (life->alive == Off)
-			return (NULL);
-		philo_think(data);
-		if (life->alive == Off)
-			return (NULL);
 	}
+	printf("action finished\n");
 	return (NULL);
 }
+
+//static inline t_status	has_eaten_enough(t_life *life)
+//{
+//	int			max;
+//	int			i;
+
+//	if (life->action->eat_max == 0)
+//		return (Off);
+//	max = 0;
+//	i = -1;
+//	while (++i < life->philo_max)
+//	{
+//		if (life->philo[i].has_eaten == life->action->eat_max)
+//			max++;
+//	}
+//	if (max == life->philo_max)
+//		return (On);
+//	return (Off);
+//}
 
 void	*main_loop(void *data)
 {
 	t_life	*life;
-	int		i;
+	//int		i;
 
 	life = data;
-	while (life->alive == On)
+	while (1)
 	{
-		i = -1;
-		while (++i < life->philo_max)
+		if (!pthread_mutex_lock(&life->time_to_die))
 		{
-			pthread_mutex_lock(&life->time_to_die);
-			if (timer_get(life->philo[i].die) || \
-			(life->action->eat_max > 0 && \
-			life->philo[i].has_eaten >= life->action->eat_max))
-			{
-				life->alive = Off;
-				printf("%ld %i has died\n", life_time(), life->philo[i].id + 1);
-				pthread_mutex_unlock(&life->time_to_die);
-				pthread_mutex_unlock(life->philo->right_hand);
-				return (NULL);
-			}
+			printf("dying\n");
+			life->alive = Off;
 			pthread_mutex_unlock(&life->time_to_die);
 		}
+		if (life->alive == Off)
+			break ;
+		if (pthread_mutex_unlock(&life->time_to_die))
+			pthread_mutex_unlock(&life->time_to_die);
 	}
+	if (pthread_mutex_unlock(&life->time_to_die))
+		pthread_mutex_unlock(&life->time_to_die);
+	life_pop(life);
 	return (NULL);
 }

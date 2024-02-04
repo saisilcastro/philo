@@ -37,11 +37,6 @@ unsigned long	pl_atoul_base(char *str, unsigned char base)
 	return (nb);
 }
 
-long	times_thousand(long i)
-{
-	return ((i << 10) - (i << 4) - (i << 3));
-}
-
 int	index_get(int n, int max)
 {
 	if (n < 0)

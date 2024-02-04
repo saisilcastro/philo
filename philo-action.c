@@ -6,96 +6,75 @@
 /*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:11:49 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/03 12:23:53 by lde-cast         ###   ########.fr       */
+/*   Updated: 2024/02/04 02:00:39 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 #include <unistd.h>
 
-static inline t_status	right_hand(t_philo *man)
+t_status	philo_fork_take(t_philo *set)
 {
-	int	left;
-	int	right;
-
-	if (life_get()->alive == Off)
-		return (Off);
-	right = pthread_mutex_lock(man->right_hand);
-	left = pthread_mutex_lock(man->left_hand);
-	if (!right && !left)
+	if (set->id % 2 == 0)
 	{
-		if (life_get()->alive)
+		pthread_mutex_lock(set->left_hand);
+		pthread_mutex_lock(set->right_hand);
+		if (life_is_over())
 		{
-			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
-			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
-			printf("%ld %i is eating\n", life_time(), man->id + 1);
+			philo_fork_release(set);
+			return (Off);
 		}
-		man->has_eaten++;
-		usleep(man->wait[0].interval * 1000);
-		pthread_mutex_unlock(man->right_hand);
-		pthread_mutex_unlock(man->left_hand);
-		timer_set(man->die);
+		printf("%ld %i has taken a fork\n", life_time(), set->id);
+		printf("%ld %i has taken a fork\n", life_time(), set->id);
 	}
-	return (On);
-}
-
-static inline t_status	left_hand(t_philo *man)
-{
-	int	left;
-	int	right;
-
-	if (life_get()->alive == Off)
-		return (Off);
-	left = pthread_mutex_lock(man->left_hand);
-	right = pthread_mutex_lock(man->right_hand);
-	if (!left && !right)
-	{
-		if (life_get()->alive)
-		{
-			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
-			printf("%ld %i has taken a fork\n", life_time(), man->id + 1);
-			printf("%ld %i is eating\n", life_time(), man->id + 1);
-		}
-		man->has_eaten++;
-		usleep(man->wait[0].interval * 1000);
-		pthread_mutex_unlock(man->left_hand);
-		pthread_mutex_unlock(man->right_hand);
-		timer_set(man->die);
-	}
-	return (On);
-}
-
-t_status	philo_eat(t_philo *man)
-{
-	if (life_get()->alive == Off)
-		return (Off);
-	if (man->id % 2 == 0)
-		return (right_hand(man));
 	else
-		return (left_hand(man));
-	return (Off);
+	{
+		pthread_mutex_lock(set->right_hand);
+		pthread_mutex_lock(set->left_hand);
+		if (life_is_over())
+		{
+			philo_fork_release(set);
+			return (Off);
+		}
+		printf("%ld %i has taken a fork\n", life_time(), set->id);
+		printf("%ld %i has taken a fork\n", life_time(), set->id);
+	}
+	return (On);
+}
+
+void	philo_fork_release(t_philo *set)
+{
+	if (set->id % 2 == 0)
+	{
+		pthread_mutex_unlock(set->left_hand);
+		pthread_mutex_unlock(set->right_hand);
+	}
+	else
+	{
+		pthread_mutex_unlock(set->right_hand);
+		pthread_mutex_unlock(set->left_hand);
+	}
+}
+
+t_status	philo_eat(t_philo *set)
+{
+	if (!philo_fork_take(set))
+		return (Off);
+	return (On);
 }
 
 void	philo_sleep(t_philo *man)
 {
-	if (life_get()->alive)
-		printf("%ld %i is sleeping\n", life_time(), man->id + 1);
-	else
-	{
-		printf("can't sleep\n");
+	if (life_is_over())
 		return ;
-	}
+	printf("%ld %i is sleeping\n", life_time(), man->id + 1);
 	usleep(man->wait[1].interval * 1000);
 }
 
 void	philo_think(t_philo *man)
 {
-	if (life_get()->alive)
-		printf("%ld %i is thinking\n", life_time(), man->id + 1);
-	else
-	{
-		printf("can't think\n");
+	if (life_is_over())
 		return ;
-	}
+	printf("%ld %i is thinking\n", life_time(), man->id + 1);
 	usleep(man->wait[2].interval * 1000);
 }

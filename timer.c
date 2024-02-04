@@ -12,6 +12,11 @@
 
 #include <philo.h>
 
+static inline long	times_thousand(long i)
+{
+	return ((i << 10) - (i << 4) - (i << 3));
+}
+
 long	time_now(void)
 {
 	struct timeval	now;
@@ -35,11 +40,4 @@ int	timer_get(t_timer *set)
 	if (time_now() - set->begin < set->interval)
 		return (0);
 	return (1);
-}
-
-void	timer_set(t_timer *set)
-{
-	if (!set)
-		return ;
-	set->begin = time_now();
 }
