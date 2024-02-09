@@ -39,8 +39,14 @@ t_status	life_is_over(void)
 void	life_set(t_life *set)
 {
 	set->alive = On;
+	if (pthread_mutex_init(&set->satiated, NULL) != 0)
+		printf("error creating mutex\n");
+	if (pthread_mutex_init(&set->full, NULL) != 0)
+		printf("error creating mutex\n");
+	if (pthread_mutex_init(&set->message, NULL) != 0)
+		printf("error creating mutex\n");
 	if (pthread_mutex_init(&set->time_to_die, NULL) != 0)
 		printf("error creating mutex\n");
-	set->begin = time_now();
 	set->fork = NULL;
+	set->begin = time_now();
 }

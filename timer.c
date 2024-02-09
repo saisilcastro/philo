@@ -33,11 +33,18 @@ void	timer_start(t_timer *set, unsigned long interval)
 	set->begin = time_now();
 }
 
-int	timer_get(t_timer *set)
+t_status	timer_get(t_timer *set)
 {
 	if (!set)
-		return (0);
+		return (Off);
 	if (time_now() - set->begin < set->interval)
-		return (0);
-	return (1);
+		return (Off);
+	return (On);
+}
+
+void	timer_set(t_timer *set)
+{
+	if (!set)
+		return ;
+	set->begin = time_now();
 }

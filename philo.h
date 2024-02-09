@@ -43,6 +43,7 @@ struct s_timer
 extern long				time_now(void);
 extern void				timer_start(t_timer *set, unsigned long interval);
 extern void				timer_set(t_timer *set);
+extern t_status			timer_get(t_timer *set);
 
 enum e_hand
 {
@@ -67,6 +68,9 @@ extern t_status			philo_eat(t_philo *set);
 extern void				philo_set(t_philo *set, int id, t_action *action);
 extern void				philo_sleep(t_philo *man);
 extern void				philo_think(t_philo *man);
+extern void				philo_message(t_philo *set, char *msg);
+extern void				philo_die(t_philo *set, char *msg);
+extern t_status			philo_satiated(t_philo *set);
 
 struct s_action
 {
@@ -78,14 +82,18 @@ struct s_action
 
 struct s_life
 {
-	t_philo		*philo;
+	t_philo				*philo;
 	_Atomic int			philo_max;
 	t_action			action[1];
 	_Atomic t_status	alive;
 	pthread_t			leader;
 	pthread_mutex_t		time_to_die;
+	pthread_mutex_t		message;
+	pthread_mutex_t		satiated;
+	pthread_mutex_t		full;
 	pthread_mutex_t		*fork;
 	_Atomic long		begin;
+	_Atomic int			max;
 };
 
 extern t_life			*life_get(void);

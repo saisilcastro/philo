@@ -6,7 +6,7 @@
 /*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 15:04:11 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/04 01:04:30 by lde-cast         ###   ########.fr       */
+/*   Updated: 2024/02/09 16:28:35 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ static inline t_status	life_create(t_life *set)
 	while (++i < set->philo_max)
 	{
 		philo_set(&set->philo[i], i, set->action);
-		set->philo[i].right_hand = &set->fork[i];
-		set->philo[i].left_hand = &set->fork[(i + 1) % set->philo_max];
+		set->philo[i].left_hand = &set->fork[i];
+		set->philo[i].right_hand = &set->fork[(i + 1) % set->philo_max];
 		if (pthread_create(&set->philo[i].core, NULL,
 				&life_action, &set->philo[i]) != 0)
 			perror("failure creating pthread");
@@ -64,6 +64,12 @@ static inline void	life_join(t_life *set)
 	pthread_join(set->leader, NULL);
 }
 
+static inline t_status	valid_argument(t_life *set)
+{
+	return (set->philo_max && set->action->die
+		&& set->action->eat && set->action->sleep);
+}
+
 void	life_is_going(t_life *set, char **argv)
 {
 	int	i;
@@ -81,6 +87,11 @@ void	life_is_going(t_life *set, char **argv)
 			set->action->sleep = pl_atoul_base(*argv, 10);
 		else if (i == 4)
 			set->action->eat_max = pl_atoul_base(*argv, 10);
+	}
+	if (!valid_argument(set))
+	{
+		printf("invalid argument\n");
+		return ;
 	}
 	if (!life_create(set))
 		set->alive = Off;

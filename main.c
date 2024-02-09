@@ -22,6 +22,7 @@ int	main(int argc, char **argv)
 		tale = life_get();
 		life_set(tale);
 		life_is_going(tale, argv);
+		life_pop(tale);
 	}
 	else
 		printf("arguments passed are wrong\n");
