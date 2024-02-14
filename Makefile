@@ -35,7 +35,7 @@ fclean: clean
 	$(call REMOVE,${NAME})
 re: fclean all
 fucker:
-	./$(NAME) 8 800 200 200
+	./$(NAME) 8 800 200 200 5
 play:
 	valgrind --leak-check=full -q ./$(NAME) 4 210 100 100 2
 hell:

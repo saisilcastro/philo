@@ -6,7 +6,7 @@
 /*   By: lde-cast <lde-cast@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 20:11:49 by mister-code       #+#    #+#             */
-/*   Updated: 2024/02/05 17:08:30 by lde-cast         ###   ########.fr       */
+/*   Updated: 2024/02/14 17:36:17 by lde-cast         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,7 @@ void	philo_sleep(t_philo *man)
 {
 	if (life_is_over())
 		return ;
-	if (!philo_satiated(man))
-		philo_message(man, "is sleeping");
+	philo_message(man, "is sleeping");
 	usleep(man->wait[1].interval * 1000);
 }
 
@@ -82,7 +81,6 @@ void	philo_think(t_philo *man)
 {
 	if (life_is_over())
 		return ;
-	if (!philo_satiated(man))
-		philo_message(man, "is thinking");
+	philo_message(man, "is thinking");
 	usleep(man->wait[2].interval * 1000);
 }
