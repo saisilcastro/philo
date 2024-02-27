@@ -30,8 +30,7 @@ unsigned long	pl_atoul_base(char *str, unsigned char base)
 	nb = 0;
 	while (*str)
 	{
-		nb *= (long)base;
-		nb += base_get(*str);
+		nb = (nb * base) + base_get(*str);
 		str++;
 	}
 	return (nb);
