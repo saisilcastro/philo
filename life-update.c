@@ -19,14 +19,8 @@ void	*life_action(void *data)
 	while (!life_is_over())
 	{
 		philo_eat(data);
-		if (life_is_over())
-			break ;
 		philo_sleep(data);
-		if (life_is_over())
-			break ;
 		philo_think(data);
-		if (life_is_over())
-			break ;
 	}
 	return (NULL);
 }
